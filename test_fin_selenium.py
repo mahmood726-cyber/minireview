@@ -3,8 +3,12 @@ CRES v4.0 — Selenium End-to-End Test Suite
 Covers: functional smoke test, ICER capture post-Markov fix, manuscript claim verification
 """
 import sys, io, os, time, re, json
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
-sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+# Reassigning sys.stdout/stderr at import time corrupts pytest's capture
+# tmpfiles and breaks collection ("I/O operation on closed file"). Only rewrap
+# when running this file as a standalone script, never under pytest.
+if "pytest" not in sys.modules:
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
